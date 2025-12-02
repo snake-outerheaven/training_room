@@ -1,0 +1,1 @@
+﻿Console.WriteLine(34.40M);
