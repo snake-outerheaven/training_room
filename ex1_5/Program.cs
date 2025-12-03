@@ -5,7 +5,7 @@
     private List<float> _grades; // array privado de notas de cada aluno
     public IReadOnlyList<float> Grades => _grades.AsReadOnly(); // notas encapsuladas
 
-    public float Average => _grades.Average(); // aluno sempre terá a sua média.
+    public float Average => _grades.Count() > 0 ? 0f : _grades.Average(); // aluno sempre terá a sua média.
 
     public Student(string name)
     {
@@ -55,9 +55,9 @@
         _grades[index] = grade;
     }
     public void SetGrade(List<float> grades)
-{
-    _grades = grades?.Where(g => !float.IsNaN(g) && g >= 0f).ToList() ?? new List<float>();
-}
+    {
+        _grades = grades?.Where(g => !float.IsNaN(g) && g >= 0f).ToList() ?? new List<float>();
+    }
 
 
     public override string ToString()
