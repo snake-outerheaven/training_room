@@ -103,7 +103,7 @@ public class DbHandler
 
     // TODO: implementar CRUD de estudantes no Banco de Dados e depois fazer o controlador que vai orquestrar tudo!
 
-    public static void CreateWithGrades(string name, params float[] grades)
+    public static void Create(string name, params float[] grades)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("Nome não pode ser vazio!");
@@ -123,4 +123,24 @@ public class DbHandler
             File.AppendAllText("error.log", $"[{DateTime.Now}] Error when initializing new student on memory: {ex.Message}");
         }
     }
+
+    public static void Create(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Nome não pode ser vazio.");
+
+        try
+        {
+            Student student = new Student(name);
+            Students.Add(student);
+            Save();
+        }
+        catch (Exception ex)
+        {
+            Thread.Sleep(750);
+            Console.WriteLine($"Erro ao inicializar estudante sem notas!\nMensagem de erro: {ex.Message}");
+            File.AppendAllText("error.log", $"[{DateTime.Now}] ErrFor when initializing new student on memory: {ex.Message}");
+        }
+    }
+
 };
