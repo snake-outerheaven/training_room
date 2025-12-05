@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-public class DbHandler
+public static class DbHandler
 {
     /*
         Tudo que é static será compartilhado entre todas as instâncias de DbHander.
@@ -55,16 +55,23 @@ public class DbHandler
             List<Student> dbStudents =
                 JsonSerializer.Deserialize<List<Student>>(json) ?? new List<Student>();
 
-            Students.Clear();
-            Students.AddRange(dbStudents);
+            Students = dbStudents;
         }
         catch (JsonException ex)
         {
             Console.WriteLine($"Erro ao interpretar JSON: {ex.Message}");
-            Thread.Sleep(750);
+            Thread.Sleep(500);
+            Console.WriteLine("Infelizmente a aplicação rodará com DB vazio após falha de carregamento por corrupção no JSON.");
             Students.Clear();
             File.WriteAllText(DbPath, "[]");
         }
+    }
+
+    static DbHandler()
+    {   
+        Console.WriteLine("Inicializando DB da aplicação...");
+        Thread.Sleep(500);
+        Load();
     }
 
 
