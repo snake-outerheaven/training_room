@@ -27,6 +27,7 @@ public class DbHandler
         catch (IOException ioex)
         {
             Console.WriteLine($"Erro de I/O ao verificar/criar o arquivo: {ioex.Message}");
+            Thread.Sleep(750);
             File.AppendAllText("error.log",
                 $"[{DateTime.Now}] I/O error on DB existence check: {ioex.Message}\n");
             return;
@@ -101,4 +102,25 @@ public class DbHandler
     }
 
     // TODO: implementar CRUD de estudantes no Banco de Dados e depois fazer o controlador que vai orquestrar tudo!
+
+    public static void CreateWithGrades(string name, params float[] grades)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Nome não pode ser vazio!");
+
+        List<float> sanitizedGrades = grades?.Where(g => !float.IsNaN(g) && g >= 0).ToList() ?? new List<float>();
+
+        try
+        {
+            Student student = new Student(name, sanitizedGrades);
+            Students.Add(student);
+            Save();
+        }
+        catch (Exception ex)
+        {
+            Thread.Sleep(750);
+            Console.WriteLine($"Erro ao inicializar estudante com notas!\nMensagem de erro: {ex.Message}");
+            File.AppendAllText("error.log", $"[{DateTime.Now}] Error when initializing new student on memory: {ex.Message}");
+        }
+    }
 };
