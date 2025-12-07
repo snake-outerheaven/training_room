@@ -168,4 +168,55 @@ app.MapPost("/todos/{id:int}/delete", async (int id, AppDbContext db) =>
     return Results.Redirect("/ui");                                                // volta para a UI
 });
 
+// CREATE handler que recebe form-urlencoded
+app.MapPost("/todos/create", async (HttpRequest req, AppDbContext db) =>
+{
+    var form = await req.ReadFormAsync();
+    var name = form["TaskName"].ToString();
+
+    var todo = new TodoItem
+    {
+        TaskName = name,
+        IsCompleted = false
+    };
+
+    db.Todos.Add(todo);
+    await db.SaveChangesAsync();
+
+    return Results.Redirect("/ui");
+});
+
+
+// UPDATE handler que recebe form-urlencoded
+app.MapPost("/todos/{id}/edit", async (int id, HttpRequest req, AppDbContext db) =>
+{
+    var todo = await db.Todos.FindAsync(id);
+    if (todo is null)
+        return Results.NotFound();
+
+    var form = await req.ReadFormAsync();
+
+    todo.TaskName = form["TaskName"].ToString();
+    todo.IsCompleted = form.ContainsKey("IsCompleted");
+
+    await db.SaveChangesAsync();
+
+    return Results.Redirect("/ui");
+});
+
+
+// DELETE handler via POST form
+app.MapPost("/todos/{id}/delete", async (int id, AppDbContext db) =>
+{
+    var todo = await db.Todos.FindAsync(id);
+    if (todo is null)
+        return Results.NotFound();
+
+    db.Todos.Remove(todo);
+    await db.SaveChangesAsync();
+
+    return Results.Redirect("/ui");
+});
+
+
 app.Run(); // inicia o servidor
