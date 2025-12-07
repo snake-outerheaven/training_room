@@ -169,7 +169,7 @@ app.MapPost("/todos/{id:int}/delete", async (int id, AppDbContext db) =>
 });
 
 // CREATE handler que recebe form-urlencoded
-app.MapPost("/todos/create", async (HttpRequest req, AppDbContext db) =>
+app.MapPost("/todos/create/url", async (HttpRequest req, AppDbContext db) =>
 {
     var form = await req.ReadFormAsync();
     var name = form["TaskName"].ToString();
